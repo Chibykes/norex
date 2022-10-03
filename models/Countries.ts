@@ -1,4 +1,5 @@
 import { Schema, model, models } from 'mongoose';
+import connectMongo from '../hooks/connectMongo';
 
 const CountrySchema = new Schema({
     code: {type: String},
@@ -10,5 +11,4 @@ const CountrySchema = new Schema({
 });
 
 const CountryModel = models.countries || model('countries', CountrySchema);
-
 export default CountryModel;
