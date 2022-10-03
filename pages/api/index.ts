@@ -7,7 +7,7 @@ type Data = {
 
 
 const handler = async( req: NextApiRequest, res: NextApiResponse<Data>) => {
-  res.status(200).json({name: "Nores Backend Api"});
+  res.status(200).json({name: "Norex Backend Api"});
 }
 
 export default handler;
