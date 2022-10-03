@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import fetch from 'node-fetch';
+import currencies from '../../currencies';
 import connectMongo from '../../hooks/connectMongo';
 import Countries from '../../models/Countries';
 
@@ -11,13 +12,13 @@ import Countries from '../../models/Countries';
 
 const handler = async( req: NextApiRequest, res: NextApiResponse<any>) => {
 
-  await connectMongo();
+  // await connectMongo();
 
-  const list =  await Countries.find().exec();
+  // const list =  await Countries.find().exec();
 
-  list.forEach(c => {
-    if(c.code !== `/m/09nqf`){
-      fetch(`https://www.google.com/async/currency_v2_update?vet=12ahUKEwi5lvmo_L_6AhWzxQIHHW_wAb8Q_sIDegQIAxAB..i&ei=oLA4Y7nGI7OLi-gP7-CH-As&yv=3&cs=1&async=source_amount:1,source_currency:%2Fm%2F09nqf,target_currency:${c.code},lang:en,country:ng,disclaimer_url:https%3A%2F%2Fwww.google.com%2Fintl%2Fen%2Fgooglefinance%2Fdisclaimer%2F,period:1M,interval:86400,_id:currency-v2-updatable_2,_pms:s,_fmt:pc`, {
+  const result = currencies.map(c => {
+
+    return fetch(`https://www.google.com/async/currency_v2_update?vet=12ahUKEwi5lvmo_L_6AhWzxQIHHW_wAb8Q_sIDegQIAxAB..i&ei=oLA4Y7nGI7OLi-gP7-CH-As&yv=3&cs=1&async=source_amount:1,source_currency:%2Fm%2F09nqf,target_currency:${c.code},lang:en,country:ng,disclaimer_url:https%3A%2F%2Fwww.google.com%2Fintl%2Fen%2Fgooglefinance%2Fdisclaimer%2F,period:1M,interval:86400,_id:currency-v2-updatable_2,_pms:s,_fmt:pc`, {
       "headers": {
         "accept": "*/*",
         "accept-language": "en-US,en;q=0.9",
@@ -46,14 +47,23 @@ const handler = async( req: NextApiRequest, res: NextApiResponse<any>) => {
       })
       .then((res:any) => res.text())
       .then((data:any) =>  {
-        Countries.findOneAndUpdate({_id: c._id}, { price: data.match(/data-exchange-rate="[\d|\.]+/)?.[0]?.split('data-exchange-rate=\"')?.[1] }).exec();
 
-        console.log({ price: data.match(/data-exchange-rate="[\d|\.]+/)?.[0]?.split('data-exchange-rate=\"')?.[1] });
-      });
-    }
+        if(c.code !== `/m/09nqf`){
+          let price:string = data.match(/data-exchange-rate="[\d|\.]+/)?.[0]?.split('data-exchange-rate=\"')?.[1];
+          return ({...c, price});
+        } return (c);
+
+
+        // Countries.findOneAndUpdate({_id: c._id}, { price: data.match(/data-exchange-rate="[\d|\.]+/)?.[0]?.split('data-exchange-rate=\"')?.[1] }).exec();
+
+        // console.log({ price: data.match(/data-exchange-rate="[\d|\.]+/)?.[0]?.split('data-exchange-rate=\"')?.[1] });
+      }); 
   });
 
-  res.status(200).json({ status: "success", mgs: "Update Successful" });
+  Promise.all(result).then(dat => {
+    res.status(200).json(dat);
+  });
+
 }
 
 export default handler;

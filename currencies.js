@@ -2,7 +2,7 @@ const currencies = [
     {
         "code": "/m/019vxc",
         "name": "Afghan Afghani",
-        "price": "88.50000000000001",
+        "price": "88.10000000000001",
         "details": {
             "code": "AFN",
             "name": "Afghan afghani",
