@@ -11,7 +11,7 @@ const handler = async( req: NextApiRequest, res: NextApiResponse<Country[]>) => 
   try{
     console.log('CONNECTING TO MONGO');
     await connectMongo();
-    console.log('CONNECTION SUCCESS');
+    console.log(connectMongo);
     
     const countries = await Countries.find().exec();
     console.log(countries);
