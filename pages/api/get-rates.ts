@@ -5,22 +5,22 @@ import currencies from '../../currencies';
 import connectMongo from '../../hooks/connectMongo';
 import Countries from '../../models/Countries';
 
-// type Data = {
-//   name: string
-// }
 
 
 const handler = async( req: NextApiRequest, res: NextApiResponse<Country[]>) => {
-
-  await connectMongo();
-
-  // currencies.forEach((c:Country) => {
-  //   Countries.create(c);
-  // });
-
-  const countries = await Countries.find().exec();
-
-  res.status(200).json(countries);
+  try{
+    console.log('CONNECTING TO MONGO');
+    await connectMongo();
+    console.log('CONNECTION SUCCESS');
+    
+    const countries = await Countries.find().exec();
+    console.log(countries);
+  
+    res.status(200).json(countries);
+  } catch (err:any){
+    console.error(err);
+    throw new Error(err);
+  }
 }
 
 export default handler;
