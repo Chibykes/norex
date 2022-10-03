@@ -9,7 +9,7 @@ class MyDocument extends Document {
 					<link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
 					<link rel="theme-color" href="#0000" />
 				</Head>
-				<body>
+				<body className="bg-black text-white">
 					<Main />
 					<NextScript />
 				</body>
