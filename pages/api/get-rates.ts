@@ -11,9 +11,9 @@ const handler = async( req: NextApiRequest, res: NextApiResponse<any>) => {
 
   await connectMongo();
 
-  // const countries = await Countries.find().exec();
+  const countries = await Countries.find({code: "/m/019vxc"});
 
-  res.status(200).json({tv: 3});
+  res.status(200).json(countries);
 }
 
 export default handler;
