@@ -8,19 +8,16 @@ import Countries from '../../models/Countries';
 
 
 const handler = async( req: NextApiRequest, res: NextApiResponse<Country[]>) => {
-  try{
-    console.log('CONNECTING TO MONGO');
-    await connectMongo();
-    console.log(connectMongo);
-    
-    const countries = await Countries.find().exec();
-    console.log(countries);
+  await connectMongo();
+  const countries = new Promise((resolve) => { 
+    setTimeout(() => { resolve(Countries.find().exec()) }, 20000) 
+  });
   
-    res.status(200).json(countries);
-  } catch (err:any){
-    console.error(err);
-    throw new Error(err);
-  }
+  countries
+  .then((value:any) => {
+    res.status(200).json(value);
+  })
+  .catch((err:any) => {throw new Error(err)});
 }
 
 export default handler;
