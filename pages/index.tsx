@@ -13,10 +13,6 @@ interface Values {
   quote?: string
 }
 
-interface Inputs {
-  focused?: string,
-  final?: string
-}
 
 const Home: NextPage = () => {
 
@@ -58,10 +54,7 @@ const Home: NextPage = () => {
     quote: "0",
   });
 
-  const [inputs, setInputs] = useState<Inputs>({
-    focused: "",
-    final: "",
-  });
+  const [input, setInput] = useState<string|number|null>(null);
 
   const handleListSelect = (country: Country) => {
     if (tapType === "base") {
@@ -136,7 +129,24 @@ const Home: NextPage = () => {
 
   };
 
-  const userInput = (num: string | number) => {
+  const userInput = (num: string | number, e:any) => {
+
+    const div = document.createElement('DIV');
+    div.classList.add('show-click');
+    div.style.animationName = "click";
+    
+    if(e.target.nodeName === "svg"){
+      e.target = e.target.parentElement.parentElement;
+    }
+
+    if(e.target.nodeName === "path"){
+      e.target = e.target.parentElement.parentElement.parentElement;
+    }
+
+    e.target.appendChild(div);
+    div.onanimationend = () => e.target.removeChild(div);
+
+    setInput(num);
     if (inputFocus === 0) {
       convert(`${value.base}${num}`);
     }
@@ -144,6 +154,10 @@ const Home: NextPage = () => {
     if (inputFocus === 1) {
       convert(`${value.quote}${num}`);
     }
+  }
+
+  const animationRemove = (e:any) => {
+    e.target.parentElement.removeChild(e.target);
   }
 
   useEffect(() => {
@@ -283,7 +297,8 @@ const Home: NextPage = () => {
 
         <div className="grid grid-cols-3 grid-rows-4 h-3/5">
           {numbers.map((num: string | number) => (
-            <div key={num} className="num" onClick={() => userInput(num)}>
+            <div key={num} className="num" onClick={(e) => userInput(num, e)}>
+              {/* <div className="show-click" style={{animationName : num === input && "click" : "none" }} onAnimationEnd={() => setInput(null)}></div> */}
               {
                 num === "del" ? <span>
                   <svg width="25px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" className="w-6 h-6">
