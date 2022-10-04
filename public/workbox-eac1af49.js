@@ -1318,6 +1318,29 @@ define(['exports'], (function (exports) { 'use strict';
       license that can be found in the LICENSE file or at
       https://opensource.org/licenses/MIT.
     */
+
+    const newResponse = (res, headerFn) => {
+      const cloneHeaders = () => {
+          const headers = new Headers();
+          for (const kv of res.headers.entries()) {
+              headers.append(kv[0], kv[1]);
+          }
+          return headers;
+      };
+  
+      const headers = headerFn ? headerFn(cloneHeaders()) : res.headers;
+  
+      return new Promise((resolve) => {
+          return res.blob().then((blob) => {
+              resolve(new Response(blob, {
+                  status: res.status,
+                  statusText: res.statusText,
+                  headers: headers
+              }));
+          });
+      });
+    };
+
     const cacheOkAndOpaquePlugin = {
       /**
        * Returns a valid response (to allow caching) if the status is 200 (OK) or
@@ -1333,7 +1356,10 @@ define(['exports'], (function (exports) { 'use strict';
         response
       }) => {
         if (response.status === 200 || response.status === 0) {
-          return response;
+          return newResponse(response.clone(), (headers) => {
+              headers.set("x-sw-cache", 'yes');
+              return headers;
+          });
         }
 
         return null;

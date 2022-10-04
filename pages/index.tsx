@@ -24,7 +24,7 @@ const Home: NextPage = () => {
   const [openModal, setOpenModal] = useState<Boolean>(false);
   const [tapType, setTapType] = useState<"base" | "quote">("base");
   const [inputFocus, setInputFocus] = useState<0 | 1>(0);
-  const [downloading, setDownloading] = useState<0 | 1 | 2 | 3 | null>(null);
+  const [downloading, setDownloading] = useState<0 | 1 | 2 | 3 | 4 | null>(null);
   const [rates, setRates] = useState<Country[]|[]>([]);
 
   const [base, setBase] = useState<Country>({
@@ -176,21 +176,26 @@ const Home: NextPage = () => {
       setDownloading(1);
 
       fetch('/api/update-rates')
-        .then((res: any) => res.json())
-        .then((data: any) => {
+        .then((res: any) => ({headers: Object.fromEntries(res.headers), data: res.json()}))
+        .then(({headers, data}:any) => {
 
-          setRates(data);
+          
           setBase(data.filter((result: Country) => {
             return result?.code === "/m/09nqf"
           })[0]);
           setQuote(data.filter((result: Country) => {
             return result?.code === "/m/018cg3"
           })[0]);
-          setDownloading(0);
-
+          
           const fourHours: string = (new Date().getTime() + (1000 * 60 * 60 * 4)).toString();
           localStorage.setItem('rates', JSON.stringify(data));
+          
+          if(headers['x-sw-cache']){
+            return setDownloading(4);
+          }
+          
           localStorage.setItem('next-update', fourHours);
+          setDownloading(0);
         })
         .catch(err => {
           if (!localStorage.getItem('rates')) {
@@ -237,7 +242,8 @@ const Home: NextPage = () => {
             <div className={`inline-flex justify-center items-center gap-2 mx-auto p-2 ${downloading === 0 ? "bg-green-600" :
                 downloading === 1 ? "bg-sky-600" :
                   downloading === 2 ? "bg-red-600" :
-                    downloading === 3 ? "bg-red-600" : ""
+                    downloading === 3 ? "bg-red-600" :
+                    downloading === 4 ? "bg-gray-600" : ""
               } 
                     ${downloading !== null ? "opacity-100" : "opacity-0"}
                     font-semibold text-xs rounded-sm shadow-lg transition-opacity duration-500`}>
@@ -259,7 +265,8 @@ const Home: NextPage = () => {
                 downloading === 0 ? "Rates Updated" :
                   downloading === 1 ? "Downloading Rates" :
                     downloading === 2 ? "Downloading Failed" :
-                      downloading === 3 ? "Internet connection required for first time usage" : ""
+                      downloading === 3 ? "Internet connection required for first time usage" :
+                      downloading === 4 ? "Previous downloaded rates used" : ""
               }
 
             </div>
