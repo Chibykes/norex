@@ -157,21 +157,6 @@ const Home: NextPage = () => {
 
   useEffect(() => {
 
-    // if (!localStorage.getItem('rates')) {
-    //   const fourHours: string = (new Date().getTime() + (1000 * 60 * 60 * 4)).toString();
-
-    //   localStorage.setItem('rates', JSON.stringify(currencies));
-    //   localStorage.setItem('next-update', fourHours);
-      
-    // }
-
-    // const localRates = JSON.parse(localStorage.getItem('rates')!);
-
-    // setRates(localRates);
-    // setBase(localRates.filter((res: Country) => res.code === "/m/09nqf")[0]);
-    // setQuote(localRates.filter((res: Country) => res.code === "/m/018cg3")[0]);
-
-
     if (!localStorage.getItem('rates') || Number(localStorage.getItem('next-update')) <= new Date().getTime()) {
       setDownloading(1);
 
@@ -207,6 +192,7 @@ const Home: NextPage = () => {
       setQuote(JSON.parse(localStorage.getItem("rates")!).filter((result: Country) => {
         return result.code === "/m/018cg3"
       })[0]);
+      setDownloading(4);
     }
 
 
