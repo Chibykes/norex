@@ -60,9 +60,11 @@ const handler = async( req: NextApiRequest, res: NextApiResponse<any>) => {
       }); 
   });
 
-  Promise.all(result).then(dat => {
+  Promise.all(result)
+  .then(dat => {
     res.status(200).json(dat);
-  });
+  })
+  .catch(err => { res.status(500).json({err}) });
 
 }
 

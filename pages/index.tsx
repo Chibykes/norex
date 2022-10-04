@@ -65,11 +65,11 @@ const Home: NextPage = () => {
 
   const handleListSelect = (country: Country) => {
     if (tapType === "base") {
-      setInputFocus(0);
       setBase(country);
-    } else {
       setInputFocus(1);
+    } else {
       setQuote(country);
+      setInputFocus(0);
     }
 
     setOpenModal(false);
@@ -147,11 +147,11 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    convert(`${value.base}`);
+    convert(`${value.quote}`);
   }, [base]);
 
   useEffect(() => {
-    convert(`${value.quote}`);
+    convert(`${value.base}`);
   }, [quote]);
 
 
@@ -193,10 +193,11 @@ const Home: NextPage = () => {
           localStorage.setItem('next-update', fourHours);
         })
         .catch(err => {
-          console.log(err)
           if (!localStorage.getItem('rates')) {
             return setDownloading(3);
           }
+          
+          setRates(JSON.parse(localStorage.getItem("rates")!));
           setDownloading(2);
         });
     } else {
