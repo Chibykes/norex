@@ -178,6 +178,8 @@ const Home: NextPage = () => {
         .then((res: any) => res.json())
         .then((data:any) => {
 
+          setRates(data);
+
           setBase(data.filter((result: Country) => {
             return result?.code === "/m/09nqf"
           })[0]);
