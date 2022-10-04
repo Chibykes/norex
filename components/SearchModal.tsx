@@ -52,7 +52,7 @@ const SearchModal = ({ countries, handleListSelect, setOpenModal, openModal }:Pr
             </div>
             <div className="py-3">
                 {countriesList?.sort(sorter)?.map(({code, name, price, details, flag, country}: Country):ReactNode => (
-                    <div key={code} className="flex justify-start items-center gap-4 border-b border-[#111] py-2 cursor-pointer active:bg-zinc-900" onClick={() => handleListSelect({code, details, name, price, flag, country})}>
+                    <div key={code} className="flex justify-start items-center gap-4 border-b border-[#111] py-2 cursor-pointer active:bg-[#222]" onClick={() => handleListSelect({code, details, name, price, flag, country})}>
                         <div className="relative w-[20px] h-[20px] rounded-full overflow-hidden">
                             <Image src={flag} layout="fill" objectFit="cover" />
                         </div>
