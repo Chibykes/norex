@@ -176,19 +176,8 @@ const Home: NextPage = () => {
       setDownloading(1);
 
       fetch('/api/update-rates')
-        .then((res: any) => {
-          if(Object.fromEntries(res.headers)['x-sw-cahce']){
-            return [];
-          }
-
-          return res.json();
-        })
+        .then((res: any) => res.json())
         .then((data:any) => {
-
-          if(data.length === 0){
-            setRates(JSON.parse(localStorage.getItem("rates")!));
-            return setDownloading(4);
-          }
 
           setBase(data.filter((result: Country) => {
             return result?.code === "/m/09nqf"
